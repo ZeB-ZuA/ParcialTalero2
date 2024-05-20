@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // MongoDB setup
-mongoose.connect('mongodb+srv://sebastiansua90:1sxVnTTAMq7PnbqN@sovietpaws.i4jh25a.mongodb.net/?retryWrites=true&w=majority&appName=SovietPaws', {
+mongoose.connect('mongodb+srv://Johan:Parcial2024@cluster0.oe0gtl3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
   useUnifiedTopology: true
 });
 
