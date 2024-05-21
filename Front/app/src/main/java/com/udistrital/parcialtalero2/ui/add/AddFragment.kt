@@ -1,6 +1,7 @@
 package com.udistrital.parcialtalero2.ui.add
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -15,6 +16,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 
 import com.udistrital.parcialtalero2.databinding.FragmentAddBinding
+import com.udistrital.parcialtalero2.pecistencia.MascotaServicio
+import com.udistrital.parcialtalero2.ui.list.ListViewModel
 
 
 class AddFragment : Fragment() {
@@ -22,7 +25,16 @@ class AddFragment : Fragment() {
     private var _binding: FragmentAddBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: AddViewModel
+    private lateinit var mascotaServicio: MascotaServicio
+    private lateinit var context: Context
 
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        this.context = context
+        mascotaServicio = MascotaServicio(context)
+
+    }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
@@ -32,45 +44,43 @@ class AddFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        // Inicializar ViewModel
-        viewModel = ViewModelProvider(this).get(AddViewModel::class.java)
-
+        // Inicializar ViewModel con las dependencias
+        mascotaServicio = MascotaServicio(context)
+        viewModel = AddViewModel(mascotaServicio)
         // Ponerle el observer de las variables del viewmodel al las variables del UI(Enlazarlas)
         observeViewModel()
-
         // Accion del boton Submit
         binding.SubmitButton.setOnClickListener {
             onSubmitButtonClick()
         }
-
         // eventode  botton para escojer imagenes
         binding.imageButton.setOnClickListener {
             pickImage()
         }
     }
-
     private fun observeViewModel() {
-        viewModel.name.observe(viewLifecycleOwner, Observer {
+        viewModel.nombre.observe(viewLifecycleOwner, Observer {
             binding.nametxt.setText(it)
         })
 
-        viewModel.type.observe(viewLifecycleOwner, Observer {
+        viewModel.tipo.observe(viewLifecycleOwner, Observer {
             setSpinnerSelection(binding.spinnerType, it)
         })
 
-        viewModel.age.observe(viewLifecycleOwner, Observer {
+        viewModel.edad.observe(viewLifecycleOwner, Observer {
             binding.agetxt.setText(it.toString())
         })
 
-        viewModel.breed.observe(viewLifecycleOwner, Observer {
+        viewModel.raza.observe(viewLifecycleOwner, Observer {
             setSpinnerSelection(binding.spinnerBreed, it)
         })
 
-        viewModel.imageUri.observe(viewLifecycleOwner, Observer {
-           // Cambiar la imagen del imageButton con la uri seleccionada
-            binding.imageButton.setImageURI(it)
+        viewModel.img.observe(viewLifecycleOwner, Observer { img ->
+
+            val uri = Uri.parse(img)
+            binding.imageButton.setImageURI(uri)
         })
+
     }
 
     private fun onSubmitButtonClick() {
@@ -79,6 +89,7 @@ class AddFragment : Fragment() {
         viewModel.setAge(binding.agetxt.text.toString().toInt())
         viewModel.setBreed(binding.spinnerBreed.selectedItem.toString())
         viewModel.printInfo()
+        viewModel.guardar()
     }
 
     private fun setSpinnerSelection(spinner: Spinner, value: String) {
@@ -100,9 +111,10 @@ class AddFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == IMAGE_PICK_CODE && resultCode == Activity.RESULT_OK) {
             val imageUri: Uri? = data?.data
-            viewModel.setImageUri(imageUri)
+            viewModel.setImageUri(imageUri.toString())
         }
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

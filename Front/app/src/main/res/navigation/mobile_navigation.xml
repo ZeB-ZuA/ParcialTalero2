@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
+    android:background="#ADD8E6"
     app:startDestination="@+id/navigation_add">
 
     <fragment
@@ -17,9 +18,9 @@
         android:label="add"
         tools:layout="@layout/fragment_add" />
 
-    <fragment
-        android:id="@+id/navigation_details"
-        android:name="com.udistrital.parcialtalero2.ui.details.DetailsFragment"
-        android:label="details"
-        tools:layout="@layout/fragment_details" />
-</navigation>
+<fragment
+android:id="@+id/navigation_details"
+android:name="com.udistrital.parcialtalero2.ui.details.DetailsFragment"
+android:label="details"
+tools:layout="@layout/fragment_details" />
+    </navigation>
